@@ -24,3 +24,7 @@ be able to scan all chat history since for them the chat history would be empty.
 \*Akshually\*, you can use **Seed Queues** for any kind of event-driven
 systems and not just chats. We also incorporate this protocol for
 accountless synchronization between multiple devices.
+
+## Specification
+
+Specification for queues is described [here](SPECIFICATION.md).
