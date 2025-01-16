@@ -1,6 +1,6 @@
 # Seed Queues Specification
 
-Here us step-by-step guide on how you should interact with **Seed Queues**.
+Here is step-by-step guide on how you should interact with **Seed Queues**.
 
 ## Initialize connection
 
