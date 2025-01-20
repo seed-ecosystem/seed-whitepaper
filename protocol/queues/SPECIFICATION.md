@@ -123,6 +123,16 @@ You can do it by sending the following JSON:
 To get next value for `nonce`, you just take last known event from this queue
 and add `1` to it.
 
+`content` is an encrypted JSON of the message (more on encryption [below](#encryption))
+
+`signature` is created the following way:
+
+```
+signature = hmacSha256(data: "SIGNATURE:" + contentString, privateKey);
+```
+
+Where `privateKey` is a key to encrypt and decrypt current message which is explained [here](#encryption).
+
 Response would be:
 
 ```
@@ -158,7 +168,7 @@ that `2` nonce.
 ```
 
 Apparently, we got `status = false` and a new event with `nonce = 2`. That way server says to us,
-that while we were trying to send our message, some client was faster and already got his message
+that while we were trying to send our message, some client was faster and already got their message
 in database before ours. So, new nonce is now `3` and we resend our message with that nonce.
 
 We do that, until we can finally insert our message. In official apps there is a limit on 20 attempts
@@ -193,7 +203,7 @@ The job itself will send you events in `2` phases:
   {"type": "event", "event": {"type": "wait", "queueId": "..."}}
   ```
   Basically before you have received `wait` event, you may show a loader to user, so
-  he knows that history isn't loaded yet. `wait` event is sent even if there is no events that
+  they know that history isn't loaded yet. `wait` event is sent even if there is no events that
   you missed.
 
 - **Second phase**
@@ -206,15 +216,41 @@ The job itself will send you events in `2` phases:
 
 ## Encryption
 
-TODO: Encryption part is not ready yet.
+> Server does not participate in the encryption process, those are client-side requirements.
 
-## Private Key Exchange
+You must not send **any** sensitive data to server. This protocol is based on
+the fact that server is untrusted. Every existing key-exchange algorithm 
+requires server trust. Even Diffie-Hellman is a subject for MITM. 
+We address the issue by offloading key-exchange, and making so it must be executed 
+through side-channels (using QR-code, link though different service, etc.).
 
-Ironically, the main point of **Seed Queues** is not the part of this specification,
-but rather a contract. You must not send **any** sensitive data to server. 
-Every existing key-exchange algorithm requires server trust. Even Diffie-Hellman
-is subject for MITM. That way, we just offloaded key-exchange, and it must be
-executed through side-channels (using QR-code, link though different service, etc.)
+> [!WARNING]
+> Drawback of our current approach is that we directly sharing private key in QR 
+> code. Later we will implement a protocol extension which will allow us to 
+> share such a QR Code that will only contain a public key for key-exchange, so
+> after the exchange the protocol will not be usable.
 
-Later we will provide a builtin way to exchange keys except that public keys will
-still be distributed through side-channels, so Seed servers can't interfere with them.
+To create a new queue, you just need to generate a bunch of random payload:
+
+- `queueId` – random 256-bit string represented in `base64` format
+- `initialPrivateKey` – random 256-bit string represented in `base64` format
+- `initialNonce` – `0`
+
+`initialPrivateKey` would be used to encode and decode message with `nonce = 0`.
+To get the next key, you need to derive it the following way:
+
+```
+nextKey = hmacSha256(data: "NEXT-KEY", key: previousKey)
+nextNonce = previousNonce + 1
+```
+
+That makes it possible to create unidirectional key flow making it possible to
+derive keys for new messages, while keeping previous ones a secret.
+
+If you shared privateKey for message with `nonce = 1`, it makes it cryptographically 
+impossible for the other side to read the message with `nonce = 0`. Yet they can
+read all the messages in the future.
+
+So, when sharing a queue with someone you **must** share not the `lastKey`, but
+the key generated of the `lastKey`. This way, right after sharing process the opposite
+side should not be able to decode any messages.
