@@ -6,7 +6,10 @@ Here is step-by-step guide on how you should interact with **Seed Queues**.
 
 It's pretty simple, just open WebSocket (wss) connection to an endpoint.
 
-Our pre-prod endpoint currently is: `wss://meetacy.app/seed-go`.
+We have 2 equal pre-prod servers for now:
+
+- `wss://meetacy.app/seed-go`
+- `wss://meetacy.app/seed-kt`
 
 There will be multi-server support, so don't hardcode this string. 
 
@@ -141,7 +144,7 @@ Response would be:
 
 `status` is either true or false and it reflects if the provided nonce was valid
 
-### What if multiple client will send message with the same nonce?
+### What if multiple clients will send message with the same nonce?
 
 We will talk about encryption later, but this is something we want to
 avoid, because encryption basically implies that you know the last 
@@ -213,6 +216,37 @@ The job itself will send you events in `2` phases:
   {"type": "event", "event": {"type": "new", "message": {  }}}
   ```
   `message` is basically the same you sent using `send` request.
+
+## Forward
+
+Server also may be used as proxy-server to access other servers. This helps us reduce
+WebSocket connections amount, and makes chatting more efficient.
+
+```
+>>> {"type": "forward", "url": "https://meetacy.app/seed-kt", "request": {"type": "send", ...}}
+```
+
+Server response would be something like this:
+
+```
+<<< {"type": "forward", "url": "https://meetacy.app/seed-kt", "forward": {"type": "response", "response": {"status": true}}}}
+```
+
+Note that `forward` contains the exact message from the forwarded server including `type`. This
+is because you also may also receive forwarded events like this:
+
+```
+<<< {"type": "forward", "url": "https://meetacy.app/seed-kt", "forward": {"type": "event", "event": {...}}}}
+```
+
+Websocket connection on other server is opened upon the first request
+and is reused for every subsequent request.
+
+`forward` requests unlike other requests must run in background, so specific poor server
+will not affect user in a way that every just becomes slow.
+
+> [!WARNING]
+> You can't pass 'forward' request inside 'forward' request.
 
 ## Encryption
 
