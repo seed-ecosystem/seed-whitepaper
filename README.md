@@ -1,8 +1,4 @@
-# ️⚠️**This repository is under construction** ⚠️
-
 # Seed
-
-> Private Messaging Platform
 
 First Messaging Platform that does not identify you
 
