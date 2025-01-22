@@ -63,3 +63,35 @@ will not affect user in a way that every just becomes slow.
 
 > [!WARNING]
 > You can't pass 'forward' request inside 'forward' request (yet).
+
+## Self-Forwarding
+
+Server **must** support this optimization since clients with
+multi-server connections will use this feature. If `url` field is set
+to the url of the current server, you don't need to `forward` request,
+but rather it should be executed in place.
+
+Imagine running at `https://example.com/` and you get the following request:
+
+```
+{
+  "type": "forward",
+  "url": "https://example.com",
+  "request": {...}
+}
+```
+
+You don't need to make a recursive request since you are already at
+the domain. So, just execute it in-place, but make it look for the 
+client like you did the actual forwarding.
+
+## Ping-Forwarding
+
+When receiving `ping` request, forward it to all the underlying opened connections
+to other servers to make sure connections with them are kept alive.
+
+## Lifecycle Sync
+
+If one of the opened underlying connections was closed by the other side,
+you should immediately close main connection as well. Later we should support
+parallel connections and statuses.
