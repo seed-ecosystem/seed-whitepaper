@@ -165,5 +165,5 @@ side should not be able to decode any messages.
 There are multiple use cases for queues. You may use them for your own use cases,
 but our official clients have the following ones:
 
-- [Chat Queues]
+- [Chat Queues](chat/README.md)
 - [Sync Queues]
