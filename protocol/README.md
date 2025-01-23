@@ -130,16 +130,22 @@ of the protocol itself. You specify them using `feature-key` of the feature.
 This may include some custom features as well that are not covered by this
 documentation.
 
-The response should always be:
+The response will be:
 
 ```
 {
   "type": "response",
   "response": {
-    "status": true
+    "v": 0,
+    "queues": 0,
+    "forwarding": 0
   }
 }
 ```
+
+It contains all the latest versions of the features that are supported by the backend.
+Note that you may talk to server that was not yet upgraded to the latest versions
+of all the features.
 
 > [!WARNING]
 > Sending this request after any other request (including sending the request multiple times) 
