@@ -43,6 +43,18 @@ send you the following event:
 }
 ```
 
+Calling `connect` if endpoint is already connected will do
+nothing and server will respond with:
+
+```
+{
+  "type": "response",
+  "response": {
+    "status": false
+  }
+}
+```
+
 Reconnecting and resending failed requests is client's responsibility.
 
 ## Forward
