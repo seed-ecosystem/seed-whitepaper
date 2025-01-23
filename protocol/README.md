@@ -110,3 +110,38 @@ Here is the set of supported features:
 
 - [Queues](queues/README.md)
 - [Forwarding](forwarding/README.md)
+
+## Versioning
+
+You can change protocol version by sending first request that provides versioning info
+to the server the following way:
+
+```
+{
+  "type": "init", 
+  "v": 0, 
+  "queues": 0, 
+  "forwarding": 0
+}
+```
+
+Every feature has versioning that is separated from versioning
+of the protocol itself. You specify them using `feature-key` of the feature. 
+This may include some custom features as well that are not covered by this
+documentation.
+
+The response should always be:
+
+```
+{
+  "type": "response",
+  "response": {
+    "status": true
+  }
+}
+```
+
+> [!WARNING]
+> Sending this request after any other request (including sending the request multiple times) 
+> is Undefined Behaviour. You must not do that. Server is allowed to continue sending 
+> events/responses for a different version or to suspend the connection.
