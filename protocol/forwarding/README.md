@@ -7,6 +7,46 @@ feature-key: `forwarding`
 Server also may be used as a proxy-server to access other servers. This helps us reduce
 WebSocket connections amount, and makes chatting more efficient.
 
+## Connect
+
+Before sending forward request to any server, you 
+must connect this server with `connect` request:
+
+```
+{
+  "type": "connect",
+  "url": "https://meetacy.app/seed-go"
+}
+```
+
+Response (even if connection was not successful) should always be:
+
+```
+{
+  "type": "response",
+  "response": {
+    "status": true
+  }
+}
+```
+
+If connection was not successful or if it was closed later server will 
+send you the following event:
+
+```
+{
+  "type": "event",
+  "event": {
+    "type": "disconnected",
+    "url": "https://meetacy.app/seed-go"
+  }
+}
+```
+
+Reconnecting and resending failed requests is client's responsibility.
+
+## Forward
+
 Forward request looks like this:
 
 ```
@@ -45,8 +85,11 @@ receive forwarded events like this:
 }
 ```
 
+If `url` was not connected, forwarding server will just ignore
+those requests.
+
 > [!WARNING]
-> API like this makes it possible for forward server to read all the traffic.
+> API like this makes it possible for forwarding server to read all the traffic.
 > It's not that critical since we anyway don't pass any sensitive data, yet
 > this makes it possible to track people IP-addresses and mapping them to sent requests 
 > just by controlling this single server.
@@ -85,13 +128,10 @@ You don't need to make a recursive request since you are already at
 the domain. So, just execute it in-place, but make it look for the 
 client like you did the actual forwarding.
 
+If client sent `connect` request with the url of forwarding server,
+server should ignore it.
+
 ## Ping-Forwarding
 
 When receiving `ping` request, forward it to all the underlying opened connections
 to other servers to make sure connections with them are kept alive.
-
-## Lifecycle Sync
-
-If one of the opened underlying connections was closed by the other side,
-you should immediately close main connection as well. Later we should support
-parallel connections and statuses.
