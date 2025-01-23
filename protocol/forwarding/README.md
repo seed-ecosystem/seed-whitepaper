@@ -90,12 +90,6 @@ client like you did the actual forwarding.
 When receiving `ping` request, forward it to all the underlying opened connections
 to other servers to make sure connections with them are kept alive.
 
-## Init-Forwarding
-
-When receiving `init` request, forward it to all the underlying opened connections
-to other servers, so they also know the version that is required by the client.
-Then, select the lowest versions from all the backends to support every backend.
-
 ## Lifecycle Sync
 
 If one of the opened underlying connections was closed by the other side,
