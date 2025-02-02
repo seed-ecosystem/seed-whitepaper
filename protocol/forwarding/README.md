@@ -69,7 +69,20 @@ Forward request looks like this:
 }
 ```
 
-Server response would be something like this:
+Server then responds with:
+
+```
+{
+  "type": "response",
+  "status": boolean
+}
+```
+
+Where `status` shows whether connection to `url` was opened or not.
+If `status` is false, it means that server was not connected to `url`.
+
+After some time, when forwarding server received response from `url`,
+forwarding server sends you the following message:
 
 ```
 {
