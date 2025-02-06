@@ -15,7 +15,7 @@ must connect this server with `connect` request:
 ```
 {
   "type": "connect",
-  "url": "https://meetacy.app/seed-go"
+  "url": "wss://meetacy.app/seed-go"
 }
 ```
 
