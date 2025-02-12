@@ -15,7 +15,7 @@ must connect this server with `connect` request:
 ```
 {
   "type": "connect",
-  "url": "https://meetacy.app/seed-go"
+  "url": "wss://meetacy.app/seed-go"
 }
 ```
 
@@ -38,7 +38,7 @@ send you the following event:
   "type": "event",
   "event": {
     "type": "disconnected",
-    "url": "https://meetacy.app/seed-go"
+    "url": "wss://meetacy.app/seed-go"
   }
 }
 ```
@@ -64,7 +64,7 @@ Forward request looks like this:
 ```
 {
   "type": "forward", 
-  "url": "https://meetacy.app/seed-kt", 
+  "url": "wss://meetacy.app/seed-kt", 
   "request": {...}
 }
 ```
@@ -87,7 +87,7 @@ forwarding server sends you the following message:
 ```
 {
   "type": "forward", 
-  "url": "https://meetacy.app/seed-kt", 
+  "url": "wss://meetacy.app/seed-kt", 
   "forward": {
     "type": "response", 
     "response": {...}
@@ -102,7 +102,7 @@ receive forwarded events like this:
 ```
 {
   "type": "forward", 
-  "url": "https://meetacy.app/seed-kt", 
+  "url": "wss://meetacy.app/seed-kt", 
   "forward": {
     "type": "event", 
     "event": {...}
@@ -139,12 +139,12 @@ multi-server connections will use this feature. If `url` field is set
 to the url of the current server, you don't need to `forward` request,
 but rather it should be executed in place.
 
-Imagine running at `https://example.com/` and you get the following request:
+Imagine running at `wss://example.com/` and you get the following request:
 
 ```
 {
   "type": "forward",
-  "url": "https://example.com",
+  "url": "wss://example.com",
   "request": {...}
 }
 ```

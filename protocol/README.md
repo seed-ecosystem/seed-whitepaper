@@ -8,8 +8,8 @@ It's pretty simple, just open a WebSocket (wss) connection to the endpoint.
 
 We have 2 equal pre-prod servers for now:
 
-- `https://meetacy.app/seed-go?queues=1`
-- `https://meetacy.app/seed-kt?queues=1&forwarding=1`
+- `wss://meetacy.app/seed-go?queues=1`
+- `wss://meetacy.app/seed-kt?queues=1&forwarding=1`
 
 > [!NOTE]
 > Client-server connection **must** be secured with **TLS**. The reason
@@ -104,7 +104,7 @@ If server is up and running, response will always be:
 
 Other features are server-dependent and not all features are required to be supported.
 Every feature has `feature-key` and every supporting feature must be denoted in `serverUrl`
-like this: `https://example.com/ws?feature-key=1`.
+like this: `wss://example.com/ws?feature-key=1`.
 
 Here is the set of supported features:
 
