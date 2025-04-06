@@ -24,9 +24,7 @@ You can do it by sending the following JSON:
 }
 ```
 
-`nonce` is a little bit tricky. It starts from zero and client should increment it.
-To get next value for `nonce`, you just take last known event from this queue
-and add `1` to it.
+`nonce` is just a unique number which starts from 0 and goes to infinity.
 
 `content` is an encrypted JSON of the message (more on encryption [below](#encryption))
 
@@ -36,7 +34,8 @@ and add `1` to it.
 signature = hmacSha256(data: "SIGNATURE:" + contentString, privateKey);
 ```
 
-Where `privateKey` is a key to encrypt and decrypt current message which is explained [here](#encryption).
+Where `privateKey` is a key to encrypt and decrypt current message which is
+explained [here](#encryption).
 
 Response would be:
 
@@ -46,13 +45,12 @@ Response would be:
 
 `status` is either true or false and it reflects if the provided nonce was valid
 
-### What if multiple clients will send message with the same nonce?
+### Multiple clients may try to send a message at the same time
 
-We will talk about encryption later, but this is something we want to
-avoid, because encryption basically implies that you know the last 
-event before encrypting the next one.
+This is something we want to avoid, because our encryption method works in a way
+that you must know the last event before encrypting the next one.
 
-So, if such occurrence happens, you just resend it. Here is the example:
+So, if such occurrence happens, you just resend the event. Here is the example:
 
 We start from subscribing to queue.
 
@@ -62,9 +60,9 @@ We start from subscribing to queue.
 <<< {"type": "event", "event": {"type": "new", "message": {"nonce": 1, ...}}
 ```
 
-We subscribed to queue with some id, provided that we need to receive messages with `nonce >= 1`.
-Server then sent us a new event with `nonce = 1`. Next nonce is clearly `2`. So we try to send message with
-that `2` nonce.
+We subscribed to queue with some id, provided that we need to receive messages
+with `nonce >= 1`. Server then sent us a new event with `nonce = 1`. Next
+nonce is clearly `2`. So we try to send message with that `2` nonce.
 
 ```
 >>> {"type": "send", "message": {"nonce": 2, ...}
@@ -130,7 +128,7 @@ We address the issue by offloading key-exchange, and making so it must be execut
 through side-channels (using QR-code, link though different service, etc.).
 
 > [!WARNING]
-> Drawback of our current approach is that we directly sharing private key in QR 
+> Drawback of our current approach is that we directly share private key in QR 
 > code. Later we will implement a protocol extension which will allow us to 
 > share such a QR Code that will only contain a public key for key-exchange, so
 > after the exchange the protocol will not be usable.
@@ -166,4 +164,5 @@ There are multiple use cases for queues. You may use them for your own use cases
 but our official clients have the following ones:
 
 - [Chat Queues](chat/README.md)
+- [Key Exchange (kex) queues](kex/README.md)
 - [Sync Queues]

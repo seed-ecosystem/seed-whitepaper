@@ -48,7 +48,7 @@ using modern encryption standards intead of coming with our own solutions.
 Below is the implementation written in pseudocode that hopefully everyone should
 understand.
 
-**Link format**: `seed://kex-share?queueId=XXXXXX&publicKey=XXXXXX`
+**Link format**: `seed://kex-share?queueId=XXXXXX&url=XXXXXX&publicKey=XXXXXX`
 
 Alice (**Sharing Side**) implementation:
 
